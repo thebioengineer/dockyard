@@ -1,0 +1,19 @@
+Package: dockyard
+Type: Package
+Title: Provide tools for interfacing and building docker containers in R
+Version: 0.1.0
+Author: Ellis Hughes
+Maintainer: Ellis Hughes <yourself@somewhere.net>
+Description: {dockyard} provides the tools to easily create 
+    new docker images and start running docker containers from
+	within R. Most people say to run and execute your R workflows
+	with docker containers, but usually leave the mechanics to doing
+	that up to the user. This creates a barrier to entry of knowing
+	how to create and work with docker containers. 
+	
+	{dockyard} aims to narrow the gap by providing opinionated wrappers
+	on writing dockerfile's and api's for running, orchestrating,
+	and interfacing	with docker containers.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
