@@ -10,27 +10,26 @@
 #' dockerfile() %>%
 #'   from("rocker/shiny:3.6.1")
 #' @family dockerfile
-build <- function(df,image){
+build <- function(df, image) {
   UseMethod("build")
 }
 
-build.dockerfile <- function(df,image){
-  build_from_dockerfile(attr(df,".dockerfile"),image)
-
+build.dockerfile <- function(df, image) {
+  build_from_dockerfile(attr(df, ".dockerfile"), image)
 }
 
-build.edited_dockerfile<-function(df,image){
-  commands<-commands(df)
-  tempDF<-normalizePath(tempfile(),winslash = "/",mustWork = FALSE)
-  writeLines(commands(df),tempDF)
-  build_from_dockerfile(tempdf,image)
+build.edited_dockerfile <- function(df, image) {
+  commands <- commands(df)
+  tempDF <- normalizePath(tempfile(), winslash = "/", mustWork = FALSE)
+  writeLines(commands(df), tempDF)
+  build_from_dockerfile(tempdf, image)
 }
 
-build_from_dockerfile<-function(dockerfile,image){
-  if(!check_docker()){
+build_from_dockerfile <- function(dockerfile, image) {
+  if (!check_docker()) {
     stop("`docker` needs to be added to your execution path.")
   }
-  cmd<-paste0("docker build -f",dockerfile,"-t",image)
+  cmd <- paste0("docker build -f", dockerfile, "-t", image)
   print(cmd)
   # system(cmd)
 }

@@ -48,8 +48,8 @@ print.dockerfile <- function(x, ...) {
   invisible(x)
 }
 
-print.edited_dockerfile<-function(x,...){
-  print.dockerfile(x,...)
+print.edited_dockerfile <- function(x, ...) {
+  print.dockerfile(x, ...)
 }
 
 add_command <- function(x, new_command) {
@@ -60,7 +60,7 @@ add_command <- function(x, new_command) {
     .Data = new_command,
     .dockerfile = attr(x, ".dockerfile"),
     .base_image = attr(x, ".base_image"),
-    class = c("edited_dockerfile","dockerfile")
+    class = c("edited_dockerfile", "dockerfile")
   )
 }
 
@@ -70,7 +70,7 @@ add_base_image <- function(x, image) {
     warning("Overwriting original base image '", o_image, "' with '", image, "'.")
   }
   attr(x, ".base_image") <- image
-  class(x) <- c("edited_dockerfile","dockerfile")
+  class(x) <- c("edited_dockerfile", "dockerfile")
   return(x)
 }
 
@@ -90,7 +90,7 @@ add_base_image <- function(x, image) {
 #' commands(df)
 #' @family
 #'
-commands<-function(df){
+commands <- function(df) {
   commands <- df
   if (!is.null(attr(df, ".base_image"))) {
     commands <- c(paste("FROM", attr(df, ".base_image")), commands)

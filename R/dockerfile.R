@@ -50,7 +50,7 @@ update <- function(df) {
 #' dockerfile() %>%
 #'   from("rocker/shiny:3.6.1") %>%
 #'   update() %>%
-#'   install("git","libcurl4-openssl-dev")
+#'   install("git", "libcurl4-openssl-dev")
 #' @family dockerfile
 #'
 install <- function(df, ...) {
@@ -58,7 +58,7 @@ install <- function(df, ...) {
 
   install_command <- paste(
     "RUN apt-get install -y --no-install-recommends ",
-    paste0( to_install, collapse = " ")
+    paste0(to_install, collapse = " ")
   )
   add_command(df, install_command)
 }
@@ -76,9 +76,8 @@ install <- function(df, ...) {
 #' dockerfile() %>%
 #'   from("rocker/shiny:3.6.1") %>%
 #'   update() %>%
-#'   install("git","libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl","dplyr")
-#'
+#'   install("git", "libcurl4-openssl-dev") %>%
+#'   install_r_lib("rcurl", "dplyr")
 #' @family dockerfile
 #'
 install_r_lib <- function(df, ...) {
@@ -106,12 +105,11 @@ install_r_lib <- function(df, ...) {
 #' dockerfile() %>%
 #'   from("rocker/shiny:3.6.1") %>%
 #'   update() %>%
-#'   install("git","libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl","dplyr") %>%
+#'   install("git", "libcurl4-openssl-dev") %>%
+#'   install_r_lib("rcurl", "dplyr") %>%
 #'   run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
 #'   run("Rscript latest.R") %>%
 #'   run("dpkg -i rstudio-server-daily-amd64.deb")
-#'
 #' @family dockerfile
 #'
 run <- function(df, cmd) {
@@ -134,13 +132,12 @@ run <- function(df, cmd) {
 #' dockerfile() %>%
 #'   from("rocker/shiny:3.6.1") %>%
 #'   update() %>%
-#'   install("git","libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl","dplyr") %>%
+#'   install("git", "libcurl4-openssl-dev") %>%
+#'   install_r_lib("rcurl", "dplyr") %>%
 #'   run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
 #'   run("Rscript latest.R") %>%
 #'   run("dpkg -i rstudio-server-daily-amd64.deb") %>%
-#'   copy( userconf.sh","/etc/cont-init.d/userconf")
-#'
+#'   copy("userconf.sh", "/etc/cont-init.d/userconf")
 #' @family dockerfile
 #'
 copy <- function(df, source, dir) {
@@ -159,27 +156,26 @@ copy <- function(df, source, dir) {
 #' # shiny server using R version 3.6.1, update all existing software
 #' # and install git and curl. Then initialize Rstudio server, and copy in a config file
 #'
-#' new_dockerfile <- tempfile(pattern = "new_dockerfile_",fileext = "")
-
+#' new_dockerfile <- tempfile(pattern = "new_dockerfile_", fileext = "")
+#'
 #'
 #' df <- dockerfile() %>%
 #'   from("rocker/shiny:3.6.1") %>%
 #'   update() %>%
-#'   install("git","libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl","dplyr") %>%
+#'   install("git", "libcurl4-openssl-dev") %>%
+#'   install_r_lib("rcurl", "dplyr") %>%
 #'   run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
 #'   run("Rscript latest.R") %>%
 #'   run("dpkg -i rstudio-server-daily-amd64.deb") %>%
-#'   copy("userconf.sh","/etc/cont-init.d/userconf") %>%
+#'   copy("userconf.sh", "/etc/cont-init.d/userconf") %>%
 #'   save(new_dockerfile)
-#'
 #' @family dockerfile
-save<-function(df,path,overwrite = FALSE){
-  if(file.exists(path) & !overwrite){
+save <- function(df, path, overwrite = FALSE) {
+  if (file.exists(path) & !overwrite) {
     stop("File already exists. Change overwrite to TRUE to overwrite existing dockerfile")
   }
-  writeLines(commands(df),path,sep = "\n")
-  attr(df,".dockerfile")<-path
+  writeLines(commands(df), path, sep = "\n")
+  attr(df, ".dockerfile") <- path
   class(df) <- "dockerfile"
   invisible(df)
 }
