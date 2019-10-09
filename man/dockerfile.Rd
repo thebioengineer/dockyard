@@ -18,7 +18,7 @@ a dockerfile to be used for building a new docker image
 }
 \examples{
 \dontrun{
- df <- dockerfile()
- df2 <- dockerfile("path/to/existing/dockerfile")
+df <- dockerfile()
+df2 <- dockerfile("path/to/existing/dockerfile")
 }
 }
