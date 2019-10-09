@@ -208,6 +208,11 @@ copy <- function(df, source, dir) {
   add_command(df, install_command)
 }
 
+copy_from_url<-function(df,source,file){
+  copy_command <- paste("curl", source,">", file)
+  run(df, copy_command)
+}
+
 #' @export
 #' @title Command to exectute on docker image creation
 #' @description desctribe the script to be executed on docker image creation
