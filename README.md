@@ -18,7 +18,7 @@ Installation
 We are only on github at the moment, and can be downloaded at:
 
 ``` r
-remtoes::install_github("thebioengineer/dockyard")
+remotes::install_github("thebioengineer/dockyard")
 ```
 
 Example
