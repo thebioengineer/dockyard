@@ -33,7 +33,7 @@ build.edited_dockerfile <- function(df, image, builddir = ".") {
 
 build_from_dockerfile <- function(dockerfile, image, builddir = ".") {
   if(!check_docker_imagename(paste0("dummyname/",image))){
-    stop("`image` needs to be a valid image name format: user/image[:tag]")
+    stop("`image` needs to be a valid image name format: image[:tag]")
   }
   if (!check_docker()) {
     stop("`docker` needs to be added to your execution path.")
