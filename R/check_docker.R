@@ -7,7 +7,49 @@
 #' @examples
 #' check_docker()
 check_docker <- function() {
-  cmd <- system("docker")
-  result <- cmd == 0
-  return(result)
+
+  cmd <- suppressWarnings({
+      system2(
+      "docker",
+      stdout = FALSE,
+      stderr = FALSE
+      )
+    })
+  return(cmd == 0)
+}
+
+#' @export
+#' @title Check image name format
+#' @description Checks if the image name is a valid format
+#' @param imagename character vector of name(s) of the output image. Should follow username/image[:tag] format
+#' @return TRUE/FALSE
+#' @examples
+#' # Start a dockerfile based off of the rocker/shiny image to generate a
+#' # shiny server using R version 3.6.1
+#' check_docker_imagename("rocker/shiny:3.6.1")
+#' check_docker_imagename("rocker/shiny")
+#'
+check_docker_imagename <- function(imagename){
+  if(any(grepl("\\s",imagename))){
+    stop("image name should not contain spaces")
+  }
+
+  uppercase_image <- grepl(
+    "([A-Za-z0-9-_]+)\\/([A-Za-z0-9-_]+)([:][a-z0-9-_]+)*",
+    imagename,
+    perl=TRUE
+    )
+
+  valid <- grepl(
+    "([A-Za-z0-9-_]+)\\/([a-z0-9-_]+)([:][a-z0-9-_]+)*",
+    imagename,
+    perl=TRUE
+    )
+
+  if(uppercase_image & !valid){
+    stop("image name must be lowercase")
+  }
+
+  valid
+
 }

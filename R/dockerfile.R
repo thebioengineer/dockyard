@@ -11,10 +11,13 @@
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1
 #' dockerfile() %>%
-#'   from("rocker/shiny:3.6.1")
+#'   from("rocker/r-ver:devel")
 #' @family dockerfile
 #'
 from <- function(df, image = "rocker/r-base") {
+  if(!check_docker_imagename(image)){
+    stop("Enter a valid docker image in the format username/image[:tag]")
+  }
   add_base_image(df, image)
 }
 
@@ -28,7 +31,7 @@ from <- function(df, image = "rocker/r-base") {
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1
 #' dockerfile() %>%
-#'   from("rocker/shiny:3.6.1") %>%
+#'   from("rocker/r-ver:devel") %>%
 #'   update()
 #' @family dockerfile
 #'
@@ -48,19 +51,20 @@ update <- function(df) {
 #' # and install git and curl.
 #'
 #' dockerfile() %>%
-#'   from("rocker/shiny:3.6.1") %>%
+#'   from("rocker/r-ver:devel") %>%
 #'   update() %>%
-#'   install("git", "libcurl4-openssl-dev")
+#'   install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'           "libcurl4-gnutls-dev","libcairo2-dev",
+#'           "libxtdev","wget")
 #' @family dockerfile
 #'
 install <- function(df, ...) {
   to_install <- match.call(expand.dots = FALSE)$`...`
-
   install_command <- paste(
-    "RUN apt-get install -y --no-install-recommends ",
+    "apt-get install -y ",
     paste0(to_install, collapse = " ")
   )
-  add_command(df, install_command)
+  run(df, install_command)
 }
 
 #' @export
@@ -74,21 +78,24 @@ install <- function(df, ...) {
 #' # and install git and curl.
 #'
 #' dockerfile() %>%
-#'   from("rocker/shiny:3.6.1") %>%
-#'   update() %>%
-#'   install("git", "libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl", "dplyr")
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget")
+#'   install_r_lib("tidyverse")
 #' @family dockerfile
 #'
 install_r_lib <- function(df, ...) {
   to_install <- match.call(expand.dots = FALSE)$`...`
 
   install_command <- paste(
-    "RUN R -e \"install.packages(c(",
+    "R -e \"install.packages(c(",
     paste0("'", to_install, "'", collapse = ", "),
     "))\""
   )
-  add_command(df, install_command)
+
+  run(df, install_command)
 }
 
 
@@ -103,24 +110,72 @@ install_r_lib <- function(df, ...) {
 #' # and install git and curl. Then initialize Rstudio server
 #'
 #' dockerfile() %>%
-#'   from("rocker/shiny:3.6.1") %>%
-#'   update() %>%
-#'   install("git", "libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl", "dplyr") %>%
-#'   run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
-#'   run("Rscript latest.R") %>%
-#'   run("dpkg -i rstudio-server-daily-amd64.deb")
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("VERSION=$(cat version.txt)") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("gdebi -n ss-latest.deb") %>%
+#'   run("rm -f version.txt ss-latest.deb") %>%
+#'   run(". /etc/environment") %>%
+#'   install_r_lib("shiny","rmarkdown") %>%
+#'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/")
+#'
 #' @family dockerfile
 #'
 run <- function(df, cmd) {
-  install_command <- paste("RUN", cmd)
-  add_command(df, install_command)
+  if(grepl("^RUN",df[length(df)])){
+    command<-paste(df[[length(df)]], "&&", cmd )
+    update_command(df,length(df),command)
+  }else{
+    command <- paste("RUN", cmd)
+    add_command(df, command)
+  }
 }
 
+#' @export
+#' @title EXPOSE a port from the docker image
+#' @description Command to expose a port from inside the docker container through
+#' @param df a dockerfile object from `dockerfile()`
+#' @param port the port to be exposing from the docker container
+#' @examples
+#' # Start a dockerfile based off of the rocker/shiny image to generate a
+#' # shiny server using R version 3.6.1, update all existing software
+#' # and install git and curl. Then initialize Rstudio server, and copy in a config file
+#'
+#' dockerfile() %>%
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("VERSION=$(cat version.txt)") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("gdebi -n ss-latest.deb") %>%
+#'   run("rm -f version.txt ss-latest.deb") %>%
+#'   run(". /etc/environment") %>%
+#'   install_r_lib("shiny","rmarkdown") %>%
+#'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") %>%
+#'   expose(3838)
+#'
+#' @family dockerfile
+#'
+expose <- function(df,port){
+  valid_ports<-c(1023,65535)
+  if(port<valid_ports[1] | port>valid_ports[2]){
+    stop("Enter a valid port number between ",valid_ports[1]," and ",valid_ports[2],".")
+  }
+  cmd <- paste("EXPOSE",port)
+  add_command(df, cmd)
+}
 
 #' @export
-#' @title RUN command in docker image
-#' @description Command to cope files  in the docker image during building the image.
+#' @title COPy files around and into docker image
+#' @description Command to copy files  in the docker image during building the image.
 #' @param df a dockerfile object from `dockerfile()`
 #' @param source file to be copied from your local computer
 #' @param dir location the file is to be copied to
@@ -130,14 +185,22 @@ run <- function(df, cmd) {
 #' # and install git and curl. Then initialize Rstudio server, and copy in a config file
 #'
 #' dockerfile() %>%
-#'   from("rocker/shiny:3.6.1") %>%
-#'   update() %>%
-#'   install("git", "libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl", "dplyr") %>%
-#'   run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
-#'   run("Rscript latest.R") %>%
-#'   run("dpkg -i rstudio-server-daily-amd64.deb") %>%
-#'   copy("userconf.sh", "/etc/cont-init.d/userconf")
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("VERSION=$(cat version.txt)") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("gdebi -n ss-latest.deb") %>%
+#'   run("rm -f version.txt ss-latest.deb") %>%
+#'   run(". /etc/environment") %>%
+#'   install_r_lib("shiny","rmarkdown") %>%
+#'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") %>%
+#'   expose(3838) %>%
+#'   copy("shiny-server.sh", "/usr/bin/shiny-server.sh")
+#'
 #' @family dockerfile
 #'
 copy <- function(df, source, dir) {
@@ -146,36 +209,36 @@ copy <- function(df, source, dir) {
 }
 
 #' @export
-#' @title RUN command in docker image
-#' @description Command to cope files  in the docker image during building the image.
+#' @title Command to exectute on docker image creation
+#' @description desctribe the script to be executed on docker image creation
 #' @param df a dockerfile object from `dockerfile()`
-#' @param source file to be copied from your local computer
-#' @param dir location the file is to be copied to
+#' @param source file to be executed
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1, update all existing software
 #' # and install git and curl. Then initialize Rstudio server, and copy in a config file
 #'
-#' new_dockerfile <- tempfile(pattern = "new_dockerfile_", fileext = "")
+#' dockerfile() %>%
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("VERSION=$(cat version.txt)") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("gdebi -n ss-latest.deb") %>%
+#'   run("rm -f version.txt ss-latest.deb") %>%
+#'   run(". /etc/environment") %>%
+#'   install_r_lib("shiny","rmarkdown") %>%
+#'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") %>%
+#'   expose(3838) %>%
+#'   copy("shiny-server.sh", "/usr/bin/shiny-server.sh") %>%
+#'   cmd("/usr/bin/shiny-server.sh")
 #'
-#'
-#' df <- dockerfile() %>%
-#'   from("rocker/shiny:3.6.1") %>%
-#'   update() %>%
-#'   install("git", "libcurl4-openssl-dev") %>%
-#'   install_r_lib("rcurl", "dplyr") %>%
-#'   run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
-#'   run("Rscript latest.R") %>%
-#'   run("dpkg -i rstudio-server-daily-amd64.deb") %>%
-#'   copy("userconf.sh", "/etc/cont-init.d/userconf") %>%
-#'   save(new_dockerfile)
 #' @family dockerfile
-save <- function(df, path, overwrite = FALSE) {
-  if (file.exists(path) & !overwrite) {
-    stop("File already exists. Change overwrite to TRUE to overwrite existing dockerfile")
-  }
-  writeLines(commands(df), path, sep = "\n")
-  attr(df, ".dockerfile") <- path
-  class(df) <- "dockerfile"
-  invisible(df)
+#'
+cmd <- function(df, source) {
+  cmd_run <- paste0("CMD [\"", source, "\"]")
+  add_command(df, cmd_run)
 }

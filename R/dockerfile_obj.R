@@ -64,6 +64,15 @@ add_command <- function(x, new_command) {
   )
 }
 
+update_command <- function(x, index ,updated_command){
+  if (x[1] != "") {
+    x[index] <- updated_command
+  }
+  class(x) <- c("edited_dockerfile", "dockerfile")
+  x
+}
+
+
 add_base_image <- function(x, image) {
   o_image <- attr(x, ".base_image")
   if (!is.null(o_image)) {
