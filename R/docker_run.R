@@ -15,7 +15,7 @@
 #' d_conn<-docker_run(image = "rocker/r-ver:devel", name = "testimage")
 #' }
 docker_run <- function(image,name,ports,mountpoints,docker_run_args){
-  if(!check_docker_imagename(image)){
+  if(!is_local_image(image) & !check_docker_imagename(image)){
     stop("Enter a valid docker image name in the format: user/image[:tag]")
   }
 
@@ -66,6 +66,13 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
   docker_connection(name)
 }
 
+
+
+is_local_image <- function(name){
+  images <- get_images()
+  image <- strsplit(name,":")[[1]][1]
+  image %in% images$REPOSITORY
+}
 
 docker_kill<-function(x){
   UseMethod("docker_kill")

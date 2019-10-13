@@ -83,4 +83,18 @@ print.docker_connection<-function(x){
             ">"))
 }
 
+get_images<-function(){
+  dockerimages<-tempfile()
+  writeLines(system("docker image ls ",intern = TRUE),dockerimages)
+  header<-readLines(dockerimages,n = 1)
+
+  locs<-as.numeric(gregexpr(pattern = "\\s\\s\\w",header)[[1]])
+  widths<-c(locs[1],diff(locs),100)
+  containers<-read.fwf(dockerimages,widths = widths,strip.white=TRUE)
+
+  read.csv(text=paste(apply(containers,1,
+                            function(x){paste(trimws(x),collapse=",")}),"\n"),
+           stringsAsFactors = FALSE)
+
+}
 
