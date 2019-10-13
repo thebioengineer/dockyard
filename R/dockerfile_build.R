@@ -26,7 +26,7 @@ build.edited_dockerfile <- function(df, image, builddir = ".") {
   commands <- commands(df)
   tempDF <- normalizePath(tempfile(), winslash = "/", mustWork = FALSE)
   writeLines(commands(df), tempDF)
-  build_from_dockerfile(tempdf, image, builddir)
+  build_from_dockerfile(tempDF, image, builddir)
 }
 
 
