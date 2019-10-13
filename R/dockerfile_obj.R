@@ -1,9 +1,8 @@
 
-#' Specify dockerfile to base build off of
+#' @title Specify dockerfile to base build off of
 #'
-#' This function should be used with the dockercommands family of functions to generate
+#' @details  This function should be used with the dockercommands family of functions to generate
 #' a dockerfile to be used for building a new docker image
-#'
 #'
 #' @param path path to either existing dockerfile to base off of, or where the output will be
 
