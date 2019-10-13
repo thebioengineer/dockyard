@@ -9,7 +9,7 @@
 #' @return dockefile object
 #'
 docker_connection <- function(name){
-  container_table <- get_containers()
+  container_table <- list_containers()
   if(!(name%in%container_table$NAMES)){
     stop("Must be a valid container name:\n", paste("\t", container_table$NAMES, "\n"))
   }
@@ -36,7 +36,7 @@ docker_connection <- function(name){
   )
 }
 
-get_containers<-function(containername){
+list_containers<-function(){
   dockercontainers<-tempfile()
   writeLines(system("docker ps -a",intern = TRUE),dockercontainers)
   header<-readLines(dockercontainers,n = 1)
@@ -50,19 +50,19 @@ get_containers<-function(containername){
            stringsAsFactors = FALSE)
 
   containers$NAMES<-trimws(containers$NAMES)
+}
 
-  if(!missing(containername)){
-    containers[containers$NAME == containername,]
-  }else{
-    containers
-  }
+
+get_container <- function(containername){
+  containers <- list_docker_containers()
+  containers[containers$NAME == containername,]
 }
 
 
 
 print.docker_connection<-function(x){
 
-  container<-get_containers(attr(x,".name"))
+  container<-get_container(attr(x,".name"))
 
   status <- if(nrow(container)==0){
     "Does Not Exist"

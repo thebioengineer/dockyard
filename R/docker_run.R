@@ -57,7 +57,7 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
   }}
 
   if(missing(name)){
-    running_containers<-get_containers()
+    running_containers<-list_containers()
     which_image<-do.call('c',lapply(running_containers$CONTAINER.ID,function(id,newcontainerid){
       grepl(paste0("^",id),newcontainerid)},
       start_results))
