@@ -104,3 +104,30 @@ docker_stop.docker_connection<-function(x){
 }
 
 
+docker_kill.docker_connection<-function(x){
+  id <- attr(x,".docker_id")
+  kill_cmd <- paste("docker kill",id)
+  result<-system(kill_cmd,intern = TRUE)
+  if(is.null(attr(start_results,"status"))){
+    message("Killed Docker Container: ",attr(x,".name"))
+  }
+}
+
+docker_rm<-function(x){
+  UseMethod("docker_rm")
+}
+
+docker_rm.character<-function(x){
+  conn<-docker_connection(x)
+  docker_rm.docker_connection(conn)
+}
+
+docker_rm.docker_connection<-function(x){
+  id <- attr(x,".docker_id")
+  rm_cmd <- paste("docker rm",id)
+  result<-system(rm_cmd,intern = TRUE)
+  if(is.null(attr(start_results,"status"))){
+    message("Removed Docker Container: ",attr(x,".name"))
+  }
+}
+
