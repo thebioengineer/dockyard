@@ -174,8 +174,8 @@ expose <- function(df,port){
 }
 
 #' @export
-#' @title COPy files around and into docker image
-#' @description Command to copy files  in the docker image during building the image.
+#' @title Copy files into docker image
+#' @description Command to copy files in the docker image during building the image.
 #' @param df a dockerfile object from `dockerfile()`
 #' @param source file to be copied from your local computer
 #' @param dir location the file is to be copied to
@@ -202,15 +202,87 @@ expose <- function(df,port){
 #'   copy("shiny-server.sh", "/usr/bin/shiny-server.sh")
 #'
 #' @family dockerfile
+#' @rdname copy
 #'
 copy <- function(df, source, dir) {
   install_command <- paste("COPY", source, dir)
   add_command(df, install_command)
 }
 
+#' @export
+#' @title Copy files from a URL into docker image
+#' @description Command to copy files from a URL into the docker image during building the image.
+#' @param df a dockerfile object from `dockerfile()`
+#' @param source file to be copied from your local computer
+#' @param dir location the file is to be copied to
+#' @examples
+#' # Start a dockerfile based off of the rocker/shiny image to generate a
+#' # shiny server using R version 3.6.1, update all existing software
+#' # and install git and curl. Then initialize Rstudio server, and copy in a config file
+#'
+#' dockerfile() %>%
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget","curl") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("VERSION=$(cat version.txt)") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("gdebi -n ss-latest.deb") %>%
+#'   run("rm -f version.txt ss-latest.deb") %>%
+#'   run(". /etc/environment") %>%
+#'   install_r_lib("shiny","rmarkdown") %>%
+#'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") %>%
+#'   expose(3838) %>%
+#'   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh","/usr/bin/shiny-server.sh")
+#'
+#' @family dockerfile
+#' @rdname copy
+#'
 copy_from_url<-function(df,source,file){
   copy_command <- paste("curl", source,">", file)
   run(df, copy_command)
+}
+
+#' @export
+#' @title Add files from local computerinto docker image
+#' @description Command to ADd files from local computer into the docker image during building the image.
+#' @param df a dockerfile object from `dockerfile()`
+#' @param source file to be copied from your local computer
+#' @param dir location the file is to be copied to
+#' @examples
+#' # Start a dockerfile based off of the rocker/shiny image to generate a
+#' # shiny server using R version 3.6.1, update all existing software
+#' # and install git and curl. Then initialize Rstudio server, and copy in a config file
+#'
+#' dockerfile() %>%
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget","curl") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("VERSION=$(cat version.txt)") %>%
+#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("gdebi -n ss-latest.deb") %>%
+#'   run("rm -f version.txt ss-latest.deb") %>%
+#'   run(". /etc/environment") %>%
+#'   install_r_lib("shiny","rmarkdown") %>%
+#'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") %>%
+#'   expose(3838) %>%
+#'   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh","/usr/bin/shiny-server.sh") %>%
+#'   add("/my/local/shiny/folder/","/srv/shiny-server/)
+#'
+#' @family dockerfile
+#' @rdname copy
+#'
+add <- function(df, source, dir) {
+  if(!(dir.exists(source)|file.exists(source))){
+    stop("`source` not found. Please supply a valid source.")
+  }
+  Add_command <- paste("ADD", source, dir)
+  add_command(df, Add_command)
 }
 
 #' @export

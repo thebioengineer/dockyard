@@ -1,9 +1,8 @@
 
-#' Specify dockerfile to base build off of
+#' @title Specify dockerfile to base build off of
 #'
-#' This function should be used with the dockercommands family of functions to generate
+#' @details  This function should be used with the dockercommands family of functions to generate
 #' a dockerfile to be used for building a new docker image
-#'
 #'
 #' @param path path to either existing dockerfile to base off of, or where the output will be
 
@@ -15,31 +14,31 @@
 #' }
 #' @export
 
-dockerfile <- function(path = tempfile()) {
+dockerfile <- function(path="") {
   if (file.exists(path)) {
     commands <- readLines(path)
-    base_image <- gsub("^FROM ", "", commands[1], perl = TRUE)
+    base_image <- gsub("^FROM\\s+", "", commands[1], perl = TRUE)
     commands <- commands[-1]
   } else {
     commands <- ""
-    base_image <- NULL
+    base_image <- ""
   }
   structure(
     .Data = commands,
     .dockerfile = path,
     .base_image = base_image,
-    class = "dockerfile"
+    class = c("dockerfile")
   )
 }
 
 print.dockerfile <- function(x, ...) {
   loc <- attr(x, ".dockerfile")
-  cat("dockerfile:\n")
-  if (dirname(loc) != normalizePath(tempdir(), winslash = "/")) {
-    cat(c("Located at:", loc))
+  cat("<dockerfile>\n")
+  if (dirname(loc) != "") {
+    cat(c("Located at:", loc,"\n"))
   }
   commands <- x
-  if (!is.null(attr(x, ".base_image"))) {
+  if (attr(x, ".base_image")!="") {
     commands <- c(paste("FROM", attr(x, ".base_image")), commands)
   } else {
     warning("No base image defined. Use 'from' to define base image.")
@@ -75,7 +74,7 @@ update_command <- function(x, index ,updated_command){
 
 add_base_image <- function(x, image) {
   o_image <- attr(x, ".base_image")
-  if (!is.null(o_image)) {
+  if (o_image!="") {
     warning("Overwriting original base image '", o_image, "' with '", image, "'.")
   }
   attr(x, ".base_image") <- image
@@ -101,7 +100,7 @@ add_base_image <- function(x, image) {
 #'
 commands <- function(df) {
   commands <- df
-  if (!is.null(attr(df, ".base_image"))) {
+  if (attr(df, ".base_image")!="") {
     commands <- c(paste("FROM", attr(df, ".base_image")), commands)
   } else {
     stop("No base image defined. Use 'from' to define base image.")

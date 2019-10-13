@@ -19,14 +19,21 @@ build.character <- function(df, image, builddir = "."){
 }
 
 build.dockerfile <- function(df, image, builddir = ".") {
-  build_from_dockerfile(attr(df, ".dockerfile"), image, builddir)
+  dockerfile_path<-attr(df, ".dockerfile")
+  if(!file.exists(dockerfile_path)){
+    if(dockerfile_path==""){
+      dockerfile_path <- normalizePath(tempfile(), winslash = "/", mustWork = FALSE)
+    }
+    writeLines(commands(df), dockerfile_path)
+  }
+  build_from_dockerfile(dockerfile_path, image, builddir)
 }
 
 build.edited_dockerfile <- function(df, image, builddir = ".") {
   commands <- commands(df)
   tempDF <- normalizePath(tempfile(), winslash = "/", mustWork = FALSE)
   writeLines(commands(df), tempDF)
-  build_from_dockerfile(tempdf, image, builddir)
+  build_from_dockerfile(tempDF, image, builddir)
 }
 
 
@@ -38,6 +45,10 @@ build_from_dockerfile <- function(dockerfile, image, builddir = ".") {
   if (!check_docker()) {
     stop("`docker` needs to be added to your execution path.")
   }
+  if(dockerfile==""){
+
+  }
+
   cmd <- paste("docker build -f",dockerfile, "-t", image, builddir)
   # print(cmd)
   system(cmd)
