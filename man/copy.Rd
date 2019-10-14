@@ -15,21 +15,11 @@ add(df, source, dir)
 \arguments{
 \item{df}{a dockerfile object from `dockerfile()`}
 
-\item{source}{file to be copied from your local computer}
+\item{source}{file to be copied from your local computer or URL to use}
 
 \item{dir}{location the file is to be copied to}
 
-\item{df}{a dockerfile object from `dockerfile()`}
-
-\item{source}{file to be copied from your local computer}
-
-\item{dir}{location the file is to be copied to}
-
-\item{df}{a dockerfile object from `dockerfile()`}
-
-\item{source}{file to be copied from your local computer}
-
-\item{dir}{location the file is to be copied to}
+\item{file}{the output file to save the URL document as}
 }
 \description{
 Command to copy files in the docker image during building the image.
@@ -49,9 +39,13 @@ dockerfile() \%>\%
  install("sudo","gdebi","pandoc","pandoc-citeproc",
          "libcurl4-gnutls-dev","libcairo2-dev",
          "libxtdev","wget") \%>\%
-  run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") \%>\%
+  run("wget --no-verbose
+       https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+       -O version.txt") \%>\%
   run("VERSION=$(cat version.txt)") \%>\%
-  run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") \%>\%
+  run("wget --no-verbose
+       https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+        -O ss-latest.deb") \%>\%
   run("gdebi -n ss-latest.deb") \%>\%
   run("rm -f version.txt ss-latest.deb") \%>\%
   run(". /etc/environment") \%>\%
@@ -70,16 +64,21 @@ dockerfile() \%>\%
  install("sudo","gdebi","pandoc","pandoc-citeproc",
          "libcurl4-gnutls-dev","libcairo2-dev",
          "libxtdev","wget","curl") \%>\%
-  run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") \%>\%
+  run("wget --no-verbose
+      https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+       -O version.txt") \%>\%
   run("VERSION=$(cat version.txt)") \%>\%
-  run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") \%>\%
+  run("wget --no-verbose
+       https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+       -O ss-latest.deb") \%>\%
   run("gdebi -n ss-latest.deb") \%>\%
   run("rm -f version.txt ss-latest.deb") \%>\%
   run(". /etc/environment") \%>\%
   install_r_lib("shiny","rmarkdown") \%>\%
   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") \%>\%
   expose(3838) \%>\%
-  copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh","/usr/bin/shiny-server.sh")
+  copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh",
+                "/usr/bin/shiny-server.sh")
 
 }
 \seealso{

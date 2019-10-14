@@ -9,6 +9,8 @@ docker_run(image, name, ports, mountpoints, docker_run_args)
 \arguments{
 \item{image}{Repository address in the format username/image[:tag]}
 
+\item{name}{name of the docker container. can be left empty}
+
 \item{ports}{what port to expose and connect to in the docker container
 format is port:port}
 
@@ -25,7 +27,7 @@ Initialize a docker image into a docker container. Generates a
     dockercon object to help monitor status of docker container.
 }
 \examples{
-\\donotrun{
+\dontrun{
 # Start a docker container from the rocker/r-ver:devel image
 d_conn<-docker_run(image = "rocker/r-ver:devel", name = "testimage")
 }

@@ -3,6 +3,7 @@
 #' @description Initialize a docker image into a docker container. Generates a
 #'     dockercon object to help monitor status of docker container.
 #' @param image Repository address in the format username/image[:tag]
+#' @param name name of the docker container. can be left empty
 #' @param ports what port to expose and connect to in the docker container
 #'     format is port:port
 #' @param mountpoints what folder to expose to the docker container, where to
@@ -10,7 +11,7 @@
 #' @param docker_run_args any additional arguments to be passed to the `docker run` command.
 #' @return docker_conn object
 #' @examples
-#' \donotrun{
+#' \dontrun{
 #' # Start a docker container from the rocker/r-ver:devel image
 #' d_conn<-docker_run(image = "rocker/r-ver:devel", name = "testimage")
 #' }
@@ -69,7 +70,7 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
 
 
 is_local_image <- function(name){
-  images <- get_images()
+  images <- list_images()
   image <- strsplit(name,":")[[1]][1]
   image %in% images$REPOSITORY
 }
@@ -87,7 +88,7 @@ docker_kill.docker_connection<-function(x){
   id <- attr(x,".docker_id")
   kill_cmd <- paste("docker kill",id)
   result<-system(kill_cmd,intern = TRUE)
-  if(is.null(attr(start_results,"status"))){
+  if(is.null(attr(result,"status"))){
     message("Killed Docker Container: ",attr(x,".name"))
   }
 }
@@ -105,7 +106,7 @@ docker_stop.docker_connection<-function(x){
   id <- attr(x,".docker_id")
   stop_cmd <- paste("docker stop",id)
   result<-system(stop_cmd,intern = TRUE)
-  if(is.null(attr(start_results,"status"))){
+  if(is.null(attr(result,"status"))){
     message("Stopped Docker Container: ",attr(x,".name"))
   }
 }
@@ -115,7 +116,7 @@ docker_kill.docker_connection<-function(x){
   id <- attr(x,".docker_id")
   kill_cmd <- paste("docker kill",id)
   result<-system(kill_cmd,intern = TRUE)
-  if(is.null(attr(start_results,"status"))){
+  if(is.null(attr(result,"status"))){
     message("Killed Docker Container: ",attr(x,".name"))
   }
 }
@@ -133,7 +134,7 @@ docker_rm.docker_connection<-function(x){
   id <- attr(x,".docker_id")
   rm_cmd <- paste("docker rm",id)
   result<-system(rm_cmd,intern = TRUE)
-  if(is.null(attr(start_results,"status"))){
+  if(is.null(attr(result,"status"))){
     message("Removed Docker Container: ",attr(x,".name"))
   }
 }

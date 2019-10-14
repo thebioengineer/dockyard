@@ -10,6 +10,8 @@ build(df, image, builddir = ".")
 \item{df}{a dockerfile object}
 
 \item{image}{name of the output image username/image[:tag]}
+
+\item{builddir}{directory to build the docker image in. defaults to the current working directory}
 }
 \value{
 dockerfile

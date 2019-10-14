@@ -9,9 +9,9 @@ save(df, path, overwrite = FALSE)
 \arguments{
 \item{df}{a dockerfile object from `dockerfile()`}
 
-\item{source}{file to be copied from your local computer}
+\item{path}{path to where the dockerfile will be saved at}
 
-\item{dir}{location the file is to be copied to}
+\item{overwrite}{should the current dockefile be overwritten?}
 }
 \description{
 Command to cope files  in the docker image during building the image.
@@ -29,7 +29,8 @@ df <- dockerfile() \%>\%
   update() \%>\%
   install("git", "libcurl4-openssl-dev") \%>\%
   install_r_lib("rcurl", "dplyr") \%>\%
-  run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") \%>\%
+  run("wget --no-check-certificate
+   https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") \%>\%
   run("Rscript latest.R") \%>\%
   run("dpkg -i rstudio-server-daily-amd64.deb") \%>\%
   copy("userconf.sh", "/etc/cont-init.d/userconf") \%>\%
