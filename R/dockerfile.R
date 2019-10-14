@@ -115,9 +115,13 @@ install_r_lib <- function(df, ...) {
 #'  install("sudo","gdebi","pandoc","pandoc-citeproc",
 #'          "libcurl4-gnutls-dev","libcairo2-dev",
 #'          "libxtdev","wget") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+#'        -O version.txt") %>%
 #'   run("VERSION=$(cat version.txt)") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+#'        -O ss-latest.deb") %>%
 #'   run("gdebi -n ss-latest.deb") %>%
 #'   run("rm -f version.txt ss-latest.deb") %>%
 #'   run(". /etc/environment") %>%
@@ -152,9 +156,13 @@ run <- function(df, cmd) {
 #'  install("sudo","gdebi","pandoc","pandoc-citeproc",
 #'          "libcurl4-gnutls-dev","libcairo2-dev",
 #'          "libxtdev","wget") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+#'         -O version.txt") %>%
 #'   run("VERSION=$(cat version.txt)") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+#'        -O ss-latest.deb") %>%
 #'   run("gdebi -n ss-latest.deb") %>%
 #'   run("rm -f version.txt ss-latest.deb") %>%
 #'   run(". /etc/environment") %>%
@@ -177,7 +185,7 @@ expose <- function(df,port){
 #' @title Copy files into docker image
 #' @description Command to copy files in the docker image during building the image.
 #' @param df a dockerfile object from `dockerfile()`
-#' @param source file to be copied from your local computer
+#' @param source file to be copied from your local computer or URL to use
 #' @param dir location the file is to be copied to
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
@@ -190,9 +198,13 @@ expose <- function(df,port){
 #'  install("sudo","gdebi","pandoc","pandoc-citeproc",
 #'          "libcurl4-gnutls-dev","libcairo2-dev",
 #'          "libxtdev","wget") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+#'        -O version.txt") %>%
 #'   run("VERSION=$(cat version.txt)") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+#'         -O ss-latest.deb") %>%
 #'   run("gdebi -n ss-latest.deb") %>%
 #'   run("rm -f version.txt ss-latest.deb") %>%
 #'   run(". /etc/environment") %>%
@@ -202,7 +214,6 @@ expose <- function(df,port){
 #'   copy("shiny-server.sh", "/usr/bin/shiny-server.sh")
 #'
 #' @family dockerfile
-#' @rdname copy
 #'
 copy <- function(df, source, dir) {
   install_command <- paste("COPY", source, dir)
@@ -212,9 +223,7 @@ copy <- function(df, source, dir) {
 #' @export
 #' @title Copy files from a URL into docker image
 #' @description Command to copy files from a URL into the docker image during building the image.
-#' @param df a dockerfile object from `dockerfile()`
-#' @param source file to be copied from your local computer
-#' @param dir location the file is to be copied to
+#' @param  file the output file to save the URL document as
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1, update all existing software
@@ -226,16 +235,21 @@ copy <- function(df, source, dir) {
 #'  install("sudo","gdebi","pandoc","pandoc-citeproc",
 #'          "libcurl4-gnutls-dev","libcairo2-dev",
 #'          "libxtdev","wget","curl") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("wget --no-verbose
+#'       https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+#'        -O version.txt") %>%
 #'   run("VERSION=$(cat version.txt)") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+#'        -O ss-latest.deb") %>%
 #'   run("gdebi -n ss-latest.deb") %>%
 #'   run("rm -f version.txt ss-latest.deb") %>%
 #'   run(". /etc/environment") %>%
 #'   install_r_lib("shiny","rmarkdown") %>%
 #'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") %>%
 #'   expose(3838) %>%
-#'   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh","/usr/bin/shiny-server.sh")
+#'   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh",
+#'                 "/usr/bin/shiny-server.sh")
 #'
 #' @family dockerfile
 #' @rdname copy
@@ -248,9 +262,6 @@ copy_from_url<-function(df,source,file){
 #' @export
 #' @title Add files from local computerinto docker image
 #' @description Command to ADd files from local computer into the docker image during building the image.
-#' @param df a dockerfile object from `dockerfile()`
-#' @param source file to be copied from your local computer
-#' @param dir location the file is to be copied to
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1, update all existing software
@@ -262,16 +273,21 @@ copy_from_url<-function(df,source,file){
 #'  install("sudo","gdebi","pandoc","pandoc-citeproc",
 #'          "libcurl4-gnutls-dev","libcairo2-dev",
 #'          "libxtdev","wget","curl") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+#'        -O version.txt") %>%
 #'   run("VERSION=$(cat version.txt)") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+#'        -O ss-latest.deb") %>%
 #'   run("gdebi -n ss-latest.deb") %>%
 #'   run("rm -f version.txt ss-latest.deb") %>%
 #'   run(". /etc/environment") %>%
 #'   install_r_lib("shiny","rmarkdown") %>%
 #'   run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") %>%
 #'   expose(3838) %>%
-#'   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh","/usr/bin/shiny-server.sh") %>%
+#'   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh",
+#'                 "/usr/bin/shiny-server.sh") %>%
 #'   add("/my/local/shiny/folder/","/srv/shiny-server/)
 #'
 #' @family dockerfile
@@ -301,9 +317,13 @@ add <- function(df, source, dir) {
 #'  install("sudo","gdebi","pandoc","pandoc-citeproc",
 #'          "libcurl4-gnutls-dev","libcairo2-dev",
 #'          "libxtdev","wget") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+#'        -O version.txt") %>%
 #'   run("VERSION=$(cat version.txt)") %>%
-#'   run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") %>%
+#'   run("wget --no-verbose
+#'        https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+#'         -O ss-latest.deb") %>%
 #'   run("gdebi -n ss-latest.deb") %>%
 #'   run("rm -f version.txt ss-latest.deb") %>%
 #'   run(". /etc/environment") %>%

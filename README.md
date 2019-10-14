@@ -3,6 +3,8 @@
 dockyard
 ========
 
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental) [![Travis build status](https://travis-ci.org/thebioengineer/dockyard.svg?branch=master)](https://travis-ci.org/thebioengineer/dockyard) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/thebioengineer/dockyard?branch=master&svg=true)](https://ci.appveyor.com/project/thebioengineer/dockyard) [![Coverage status](https://codecov.io/gh/thebioengineer/dockyard/branch/master/graph/badge.svg)](https://codecov.io/github/thebioengineer/dockyard?branch=master)
+
 The goal of dockyard is to provide tooling for building and deploying docker containers directly from R. Most best practices suggest using docker to containerize work, but do not provide the instructions on how to do so.
 
 Installation
@@ -18,7 +20,7 @@ Installation
 We are only on github at the moment, and can be downloaded at:
 
 ``` r
-remotes::install_github("thebioengineer/dockyard")
+remtoes::install_github("thebioengineer/dockyard")
 ```
 
 Example
@@ -51,3 +53,8 @@ dockerfile() %>%
   save("shiny_dockerfile",overwrite = TRUE) %>% 
   build("dockyard_shiny_example")
 ```
+
+Code of Conduct
+---------------
+
+Please note that the 'dockyard' project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.

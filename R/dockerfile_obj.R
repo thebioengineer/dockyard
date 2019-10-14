@@ -96,7 +96,6 @@ add_base_image <- function(x, image) {
 #'   run("echo 'hello world'")
 #'
 #' commands(df)
-#' @family
 #'
 commands <- function(df) {
   commands <- df

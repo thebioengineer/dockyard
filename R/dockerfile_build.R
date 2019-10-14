@@ -3,6 +3,8 @@
 #' @description Build the dockerfile into a docker image that can be then deployed.
 #' @param df a dockerfile object
 #' @param image name of the output image username/image[:tag]
+#' @param builddir directory to build the docker image in. defaults to the current working directory
+
 #' @return dockerfile
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
@@ -58,8 +60,8 @@ build_from_dockerfile <- function(dockerfile, image, builddir = ".") {
 #' @title RUN command in docker image
 #' @description Command to cope files  in the docker image during building the image.
 #' @param df a dockerfile object from `dockerfile()`
-#' @param source file to be copied from your local computer
-#' @param dir location the file is to be copied to
+#' @param path path to where the dockerfile will be saved at
+#' @param overwrite should the current dockefile be overwritten?
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1, update all existing software
@@ -73,7 +75,8 @@ build_from_dockerfile <- function(dockerfile, image, builddir = ".") {
 #'   update() %>%
 #'   install("git", "libcurl4-openssl-dev") %>%
 #'   install_r_lib("rcurl", "dplyr") %>%
-#'   run("wget --no-check-certificate https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
+#'   run("wget --no-check-certificate
+#'    https://raw.githubusercontent.com/rocker-org/rstudio-daily/master/latest.R") %>%
 #'   run("Rscript latest.R") %>%
 #'   run("dpkg -i rstudio-server-daily-amd64.deb") %>%
 #'   copy("userconf.sh", "/etc/cont-init.d/userconf") %>%

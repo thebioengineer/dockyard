@@ -7,7 +7,7 @@
 #' @param name the name of the docker image
 
 #' @return dockefile object
-#'
+#' @export
 docker_connection <- function(name){
   container_table <- list_containers()
   if(!(name%in%container_table$NAMES)){
@@ -36,6 +36,16 @@ docker_connection <- function(name){
   )
 }
 
+
+#' @title List all docker containers available to docker daemon
+#'
+#' @details This function asks the docker daemon to list all the available
+#'    docker comtainers that are available.
+#'
+#' @return data.frame of docker containers
+#'
+#' @importFrom utils read.csv read.fwf
+#' @export
 list_containers<-function(){
   dockercontainers<-tempfile()
   writeLines(system("docker ps -a",intern = TRUE),dockercontainers)
@@ -52,15 +62,29 @@ list_containers<-function(){
   containers$NAMES<-trimws(containers$NAMES)
 }
 
-
-get_container <- function(containername){
-  containers <- list_docker_containers()
-  containers[containers$NAME == containername,]
+#' @title Get information on specific docker container
+#'
+#' @details This function asks the docker daemon to list all the available
+#'    information for a specific docker comnainer.
+#'
+#' @param name the name of the container of interest
+#'
+#' @return data.frame of docker containers
+#' @export
+get_container <- function(name){
+  containers <- list_containers()
+  containers[containers$NAME == name,]
 }
 
 
 
-print.docker_connection<-function(x){
+#' @title Print method for docker_conection objects
+#'
+#' @param x docker_connection object to be printed
+#' @param ... additional paramters, ignored for `print.docker_connection`
+
+#' @export
+print.docker_connection<-function(x,...){
 
   container<-get_container(attr(x,".name"))
 
@@ -83,7 +107,17 @@ print.docker_connection<-function(x){
             ">"))
 }
 
-get_images<-function(){
+
+#' @title List all locally exising docker images available to docker daemon
+#'
+#' @details This function asks the docker daemon to list all the available
+#'    docker images that are available.
+#'
+#' @return data.frame of docker images
+#'
+#' @importFrom utils read.csv read.fwf
+#' @export
+list_images<-function(){
   dockerimages<-tempfile()
   writeLines(system("docker image ls ",intern = TRUE),dockerimages)
   header<-readLines(dockerimages,n = 1)
