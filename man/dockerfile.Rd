@@ -4,7 +4,7 @@
 \alias{dockerfile}
 \title{Specify dockerfile to base build off of}
 \usage{
-dockerfile(path = tempfile())
+dockerfile(path = "")
 }
 \arguments{
 \item{path}{path to either existing dockerfile to base off of, or where the output will be}
@@ -13,6 +13,9 @@ dockerfile(path = tempfile())
 dockefile object
 }
 \description{
+Specify dockerfile to base build off of
+}
+\details{
 This function should be used with the dockercommands family of functions to generate
 a dockerfile to be used for building a new docker image
 }
