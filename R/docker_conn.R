@@ -7,6 +7,7 @@
 #' @param name the name of the docker image
 
 #' @return dockefile object
+#' @exportClass docker_connection docker_container
 #' @export
 docker_connection <- function(name){
   container_table <- list_containers()
@@ -60,6 +61,7 @@ list_containers<-function(){
            stringsAsFactors = FALSE)
 
   containers$NAMES<-trimws(containers$NAMES)
+  containers
 }
 
 #' @title Get information on specific docker container

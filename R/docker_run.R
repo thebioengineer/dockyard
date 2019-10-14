@@ -75,15 +75,22 @@ is_local_image <- function(name){
   image %in% images$REPOSITORY
 }
 
-docker_kill<-function(x){
+
+#' @export
+#' @title kill a docker container
+#' @description kill a currently running docker container
+#' @param x either the name of the docker container or a docker_connection
+#' @return NULL
+#' @exportMethod docker_kill
+docker_kill <- function(x){
   UseMethod("docker_kill")
 }
-
+#' @export
 docker_kill.character<-function(x){
   conn<-docker_connection(x)
   docker_kill.docker_connection(conn)
 }
-
+#' @export
 docker_kill.docker_connection<-function(x){
   id <- attr(x,".docker_id")
   kill_cmd <- paste("docker kill",id)
@@ -93,15 +100,22 @@ docker_kill.docker_connection<-function(x){
   }
 }
 
-docker_stop<-function(x){
-  UseMethod("docker_stop")
-}
 
+#' @export
+#' @title Stop a docker container from running
+#' @description Stop a currently running docker container
+#' @param x either the name of the docker container or a docker_connection
+#' @return NULL
+#' @exportMethod docker_stop
+docker_stop<-function(x){
+  UseMethod("docker_stop",x)
+}
+#' @export
 docker_stop.character<-function(x){
   conn<-docker_connection(x)
   docker_stop.docker_connection(conn)
 }
-
+#' @export
 docker_stop.docker_connection<-function(x){
   id <- attr(x,".docker_id")
   stop_cmd <- paste("docker stop",id)
@@ -111,25 +125,22 @@ docker_stop.docker_connection<-function(x){
   }
 }
 
-
-docker_kill.docker_connection<-function(x){
-  id <- attr(x,".docker_id")
-  kill_cmd <- paste("docker kill",id)
-  result<-system(kill_cmd,intern = TRUE)
-  if(is.null(attr(result,"status"))){
-    message("Killed Docker Container: ",attr(x,".name"))
-  }
-}
+#' @export
+#' @title Remove a docker container from the listed containers
+#' @description Remove a docker container from the list of docker containers
+#' @param x either the name of the docker container or a docker_connection
+#' @return NULL
+#' @exportMethod docker_rm
 
 docker_rm<-function(x){
   UseMethod("docker_rm")
 }
-
+#' @export
 docker_rm.character<-function(x){
   conn<-docker_connection(x)
   docker_rm.docker_connection(conn)
 }
-
+#' @export
 docker_rm.docker_connection<-function(x){
   id <- attr(x,".docker_id")
   rm_cmd <- paste("docker rm",id)

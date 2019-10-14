@@ -13,7 +13,8 @@
 #' df2 <- dockerfile("path/to/existing/dockerfile")
 #' }
 #' @export
-
+#' @exportClass dockerfile edited_dockerfile
+#'
 dockerfile <- function(path="") {
   if (file.exists(path)) {
     commands <- readLines(path)
@@ -31,6 +32,7 @@ dockerfile <- function(path="") {
   )
 }
 
+#' @export
 print.dockerfile <- function(x, ...) {
   loc <- attr(x, ".dockerfile")
   cat("<dockerfile>\n")
@@ -47,6 +49,7 @@ print.dockerfile <- function(x, ...) {
   invisible(x)
 }
 
+#' @export
 print.edited_dockerfile <- function(x, ...) {
   print.dockerfile(x, ...)
 }
