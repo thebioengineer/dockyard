@@ -80,6 +80,7 @@ dockerfile() \%>\%
   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh",
                 "/usr/bin/shiny-server.sh")
 
+
 }
 \seealso{
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
