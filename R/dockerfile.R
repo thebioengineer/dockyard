@@ -82,7 +82,7 @@ install <- function(df, ...) {
 #'  update() %>%
 #'  install("sudo","gdebi","pandoc","pandoc-citeproc",
 #'          "libcurl4-gnutls-dev","libcairo2-dev",
-#'          "libxtdev","wget")
+#'          "libxtdev","wget") %>%
 #'   install_r_lib("tidyverse")
 #' @family dockerfile
 #'
