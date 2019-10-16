@@ -40,18 +40,19 @@ build.edited_dockerfile <- function(df, image, builddir = ".") {
 
 
 
-build_from_dockerfile <- function(dockerfile, image, builddir = ".") {
-  if(!check_docker_imagename(paste0("dummyname/",image))){
-    stop("`image` needs to be a valid image name format: image[:tag]")
+build_from_dockerfile <- function(path, image, builddir = ".") {
+  if(!file.exists(path)){
+    stop("dockerfile does not exist")
+  }
+
+  if(!check_docker_imagename(image)){
+    stop("`image` needs to be a valid image name format: [username/]image[:tag]")
   }
   if (!check_docker()) {
     stop("`docker` needs to be added to your execution path.")
   }
-  if(dockerfile==""){
 
-  }
-
-  cmd <- paste("docker build -f",dockerfile, "-t", image, builddir)
+  cmd <- paste("docker build -f",path, "-t", image, builddir)
   # print(cmd)
   system(cmd)
 }

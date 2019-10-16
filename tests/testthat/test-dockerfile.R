@@ -5,7 +5,7 @@ test_that("`from` adds a base image to dockerfile object ", {
     from("rocker/r-ver:devel")
 
   expect_equal(attr(df_base_image, ".base_image"),"rocker/r-ver:devel")
-  expect_error(from(dockerfile(),"invalid_image_name"),
+  expect_error(from(dockerfile(),"invalidimagename?"),
                "Enter a valid docker image")
 })
 
