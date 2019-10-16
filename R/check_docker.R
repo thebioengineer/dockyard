@@ -35,18 +35,18 @@ check_docker_imagename <- function(imagename){
   }
 
   uppercase_image <- grepl(
-    "^(([A-Za-z0-9-_]+)\\/)*([A-Za-z0-9-_]+)+([:][a-z0-9-_]+)*$",
+    "^(([A-Za-z0-9-_]+)\\/)*([A-Za-z0-9-_]+)+([:][a-z0-9-_.]+)*$",
     imagename,
     perl=TRUE
     )
 
   valid <- grepl(
-    "^([A-Za-z0-9-_]+)\\/([a-z0-9-_]+)+([:][a-z0-9-_]+)*$",
+    "^([A-Za-z0-9-_]+)\\/([a-z0-9-_]+)+([:][a-z0-9-_.]+)*$",
     imagename,
     perl=TRUE
     )
   valid2 <- grepl(
-    "^([a-z0-9-_]+)+([:][a-z0-9-_]+)*$",
+    "^([a-z0-9-_]+)+([:][a-z0-9-_.]+)*$",
     imagename,
     perl=TRUE
   )
