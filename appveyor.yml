@@ -13,6 +13,9 @@ install:
 cache:
   - C:\RLibrary
 
+services:
+  - docker
+
 # Adapt as necessary starting from here
 
 build_script:
