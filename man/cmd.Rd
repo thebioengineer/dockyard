@@ -4,12 +4,12 @@
 \alias{cmd}
 \title{Command to exectute on docker image creation}
 \usage{
-cmd(df, source)
+cmd(df, ...)
 }
 \arguments{
 \item{df}{a dockerfile object from `dockerfile()`}
 
-\item{source}{file to be executed}
+\item{...}{commands with arguments to be executed as a series of character vectors}
 }
 \description{
 desctribe the script to be executed on docker image creation
@@ -25,9 +25,13 @@ dockerfile() \%>\%
  install("sudo","gdebi","pandoc","pandoc-citeproc",
          "libcurl4-gnutls-dev","libcairo2-dev",
          "libxtdev","wget") \%>\%
-  run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O version.txt") \%>\%
+  run("wget --no-verbose
+       https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+       -O version.txt") \%>\%
   run("VERSION=$(cat version.txt)") \%>\%
-  run("wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb -O ss-latest.deb") \%>\%
+  run("wget --no-verbose
+       https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+        -O ss-latest.deb") \%>\%
   run("gdebi -n ss-latest.deb") \%>\%
   run("rm -f version.txt ss-latest.deb") \%>\%
   run(". /etc/environment") \%>\%
@@ -42,7 +46,7 @@ dockerfile() \%>\%
 Other dockerfile: \code{\link{build}}, \code{\link{copy}},
   \code{\link{expose}}, \code{\link{from}},
   \code{\link{install_r_lib}}, \code{\link{install}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}

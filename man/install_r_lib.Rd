@@ -24,14 +24,14 @@ dockerfile() \%>\%
  update() \%>\%
  install("sudo","gdebi","pandoc","pandoc-citeproc",
          "libcurl4-gnutls-dev","libcairo2-dev",
-         "libxtdev","wget")
+         "libxtdev","wget") \%>\%
   install_r_lib("tidyverse")
 }
 \seealso{
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{copy}}, \code{\link{expose}},
   \code{\link{from}}, \code{\link{install}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}

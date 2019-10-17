@@ -14,6 +14,12 @@ knitr::opts_chunk$set(
 ```
 # dockyard
 
+
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Travis build status](https://travis-ci.org/thebioengineer/dockyard.svg?branch=master)](https://travis-ci.org/thebioengineer/dockyard)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/thebioengineer/dockyard?branch=master&svg=true)](https://ci.appveyor.com/project/thebioengineer/dockyard)
+[![Coverage status](https://codecov.io/gh/thebioengineer/dockyard/branch/master/graph/badge.svg)](https://codecov.io/github/thebioengineer/dockyard?branch=master)
+  
 The goal of dockyard is to provide tooling for building and deploying docker containers directly from R. Most best practices suggest using docker to containerize work, but do not provide the instructions on how to do so. 
 
 
@@ -29,7 +35,8 @@ _You can install the released version of dockyard from [CRAN](https://CRAN.R-pro
 We are only on github at the moment, and can be downloaded at:
 
 ``` r
-remtoes::install_github("thebioengineer/dockyard")
+install.packages("remotes")
+remotes::install_github("thebioengineer/dockyard")
 ```
 
 ## Example
@@ -38,10 +45,16 @@ So far, {dockyard} has tooling for creating basic dockerfiles and building from 
 Below is an example of building a dockerimage in the same format as the 
 [rocker/shiny](https://hub.docker.com/r/rocker/shiny) image.
 
-In this example, the output image is called "dockyard_shiny_example"
+In this example, the output image is called "dockyard_shiny_example". When printing out
+the dockerfile object, it may look like some steps were skipped, but rest assured all
+the steps outlined exist. When RUN statements are listed one after another, they are
+linked together via `&&`. This reduces the number of intermediary steps docker goes
+through when generating our image.
 
-```{r example, eval=FALSE}
-dockerfile() %>%
+```{r example, eval=TRUE}
+library(dockyard)
+
+shiny_dockerfile <- dockerfile() %>%
  from("rocker/r-ver:devel") %>%
  update() %>%
  install("sudo","gdebi","pandoc","pandoc-citeproc",
@@ -59,10 +72,43 @@ dockerfile() %>%
   install("curl") %>% 
   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh","/usr/bin/shiny-server.sh") %>%
   run("chmod +x /usr/bin/shiny-server.sh") %>%
-  cmd("/usr/bin/shiny-server.sh") %>% 
+  cmd("/usr/bin/shiny-server.sh") 
+
+shiny_dockerfile
+```
+
+```{r eval=FALSE}
+shiny_dockerfile %>% 
   save("shiny_dockerfile",overwrite = TRUE) %>% 
   build("dockyard_shiny_example")
 
 ```
 
+Now to get your newly formed docker image into a docker container and control it, we use `docker_run`.
 
+```{r}
+
+docker_conn <- docker_run(
+                 image = "dockyard_shiny_example", # the docker image to use
+                 name  = "dockyard_container",     # the name to assign to the docker container
+                 ports = "3838:3838"               # which port from local to connect to in the container 
+                 ) 
+
+docker_conn
+
+```
+
+To stop the docker container, we use `docker_stop`
+
+
+```{r}
+# we can also use the name of the container to stop it
+# docker_stop("dockyard_container")
+docker_stop(docker_conn)
+
+docker_conn
+```
+
+## Code of Conduct
+
+Please note that the 'dockyard' project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
