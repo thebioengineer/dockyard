@@ -1,6 +1,6 @@
 context("test-docker_conn")
 
-if(check_docker){
+if(check_docker()){
   if(!"connection_test_image"%in%list_images()$REPOSITORY){
     dockerfile() %>%
       from("debian:buster") %>%

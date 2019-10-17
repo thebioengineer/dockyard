@@ -9,12 +9,10 @@ init:
 
 install:
   ps: Bootstrap
+  - docker
 
 cache:
   - C:\RLibrary
-
-services:
-  - docker
 
 # Adapt as necessary starting from here
 
