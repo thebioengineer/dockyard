@@ -18,6 +18,6 @@ test_that("`check_docker_imagename` checks supplied image names for format", {
   expect_true(check_docker_imagename("user/imagename:tag"))
 
   expect_false(check_docker_imagename("user\\imagename"))
-  expect_false(check_docker_imagename("user_imagename"))
+  expect_false(check_docker_imagename("user?imagename"))
 })
 

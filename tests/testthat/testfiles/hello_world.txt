@@ -1,0 +1,2 @@
+Hello from {dockyard}!
+This message shows that your installation of {dockyard} and Docker appears to be working correctly.

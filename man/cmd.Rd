@@ -4,12 +4,12 @@
 \alias{cmd}
 \title{Command to exectute on docker image creation}
 \usage{
-cmd(df, source)
+cmd(df, ...)
 }
 \arguments{
 \item{df}{a dockerfile object from `dockerfile()`}
 
-\item{source}{file to be executed}
+\item{...}{commands with arguments to be executed as a series of character vectors}
 }
 \description{
 desctribe the script to be executed on docker image creation
@@ -46,7 +46,7 @@ dockerfile() \%>\%
 Other dockerfile: \code{\link{build}}, \code{\link{copy}},
   \code{\link{expose}}, \code{\link{from}},
   \code{\link{install_r_lib}}, \code{\link{install}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}

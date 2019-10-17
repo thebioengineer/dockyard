@@ -20,7 +20,7 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
     stop("Enter a valid docker image name in the format: user/image[:tag]")
   }
 
-  if(!missing(name) & grepl("\\s",name)){
+  if(!missing(name) & grepl("\\s", name, perl=TRUE)){
     stop("Must use a valid name without spaces")
   }
 
@@ -126,27 +126,76 @@ docker_stop.docker_connection<-function(x){
 }
 
 #' @export
-#' @title Remove a docker container from the listed containers
-#' @description Remove a docker container from the list of docker containers
+#' @title Pause a docker container to maintain its state
+#' @description Pause a docker container from the list of docker containers
 #' @param x either the name of the docker container or a docker_connection
 #' @return NULL
-#' @exportMethod docker_rm
+#' @exportMethod docker_pause
 
-docker_rm<-function(x){
-  UseMethod("docker_rm")
+docker_pause<-function(x){
+  UseMethod("docker_pause")
 }
 #' @export
-docker_rm.character<-function(x){
+docker_pause.character<-function(x){
   conn<-docker_connection(x)
-  docker_rm.docker_connection(conn)
+  docker_pause.docker_connection(conn)
 }
 #' @export
-docker_rm.docker_connection<-function(x){
+docker_pause.docker_connection<-function(x){
   id <- attr(x,".docker_id")
-  rm_cmd <- paste("docker rm",id)
+  rm_cmd <- paste("docker pause",id)
   result<-system(rm_cmd,intern = TRUE)
   if(is.null(attr(result,"status"))){
-    message("Removed Docker Container: ",attr(x,".name"))
+    message("Paused Docker Container: ",attr(x,".name"))
   }
 }
 
+#' @export
+#' @title Start a docker container to maintain its state
+#' @description Start a stopped docker container
+#' @param x either the name of the docker container or a docker_connection
+#' @return NULL
+#' @exportMethod docker_start
+
+docker_start<-function(x){
+  UseMethod("docker_start")
+}
+#' @export
+docker_start.character<-function(x){
+  conn<-docker_connection(x)
+  docker_start.docker_connection(conn)
+}
+#' @export
+docker_start.docker_connection<-function(x){
+  id <- attr(x,".docker_id")
+  rm_cmd <- paste("docker start",id)
+  result<-system(rm_cmd,intern = TRUE)
+  if(is.null(attr(result,"status"))){
+    message("Started Docker Container: ",attr(x,".name"))
+  }
+}
+
+#' @export
+#' @title unpause a docker container
+#' @description unpause a paused docker container
+#' @param x either the name of the docker container or a docker_connection
+#' @return NULL
+#' @exportMethod docker_unpause
+
+docker_unpause<-function(x){
+  UseMethod("docker_unpause")
+}
+#' @export
+docker_unpause.character<-function(x){
+  conn<-docker_connection(x)
+  docker_unpause.docker_connection(conn)
+}
+#' @export
+docker_unpause.docker_connection<-function(x){
+  id <- attr(x,".docker_id")
+  rm_cmd <- paste("docker unpause",id)
+  result<-system(rm_cmd,intern = TRUE)
+  if(is.null(attr(result,"status"))){
+    message("Unpaused Docker Container: ",attr(x,".name"))
+  }
+}

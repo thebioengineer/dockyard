@@ -27,6 +27,6 @@ Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{copy}}, \code{\link{expose}},
   \code{\link{from}}, \code{\link{install_r_lib}},
   \code{\link{install}}, \code{\link{run}},
-  \code{\link{save}}
+  \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}
