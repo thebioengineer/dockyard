@@ -1,23 +1,23 @@
 context("test-docker_conn")
 
+if(check_docker){
+  if(!"connection_test_image"%in%list_images()$REPOSITORY){
+    dockerfile() %>%
+      from("debian:buster") %>%
+      cmd("tail","-f","/dev/null") %>%
+      build("connection_test_image")
+  }
 
-if(!"connection_test_image"%in%list_images()$REPOSITORY){
-  dockerfile() %>%
-    from("debian:buster") %>%
-    cmd("tail","-f","/dev/null") %>%
-    build("connection_test_image")
-}
+  if(any(c("connection_test","connection_test_2")%in%list_containers()$NAMES)){
+    #kill existing test containers
+    containers<- c("connection_test","connection_test2")[
+      c("connection_test","connection_test2")%in%list_containers()$NAMES]
 
-if(any(c("connection_test","connection_test_2")%in%list_containers()$NAMES)){
-  #kill existing test containers
-  containers<- c("connection_test","connection_test2")[
-    c("connection_test","connection_test2")%in%list_containers()$NAMES]
-
-  for(container in containers){
-    docker_kill(container)
+    for(container in containers){
+      docker_kill(container)
+    }
   }
 }
-
 
 test_with_docker("Creating a docker container generates a docker_conn object", {
   test_conn <- docker_run(image = "debian:buster",
