@@ -9,7 +9,6 @@ init:
 
 install:
   ps: Bootstrap
-  - docker
 
 cache:
   - C:\RLibrary
