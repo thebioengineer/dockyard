@@ -4,14 +4,16 @@
 \alias{build}
 \title{Build the supplied dockerfile object into a dockerimage}
 \usage{
-build(df, image, builddir = ".")
+build(x, image, builddir = ".", verbose = TRUE)
 }
 \arguments{
-\item{df}{a dockerfile object}
+\item{x}{a dockerfile object or path to a dockerfile}
 
 \item{image}{name of the output image username/image[:tag]}
 
 \item{builddir}{directory to build the docker image in. defaults to the current working directory}
+
+\item{verbose}{should the command line results be printed to the R console?}
 }
 \value{
 dockerfile
@@ -29,7 +31,7 @@ dockerfile() \%>\%
 Other dockerfile: \code{\link{cmd}}, \code{\link{copy}},
   \code{\link{expose}}, \code{\link{from}},
   \code{\link{install_r_lib}}, \code{\link{install}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}

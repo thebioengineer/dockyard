@@ -33,7 +33,7 @@ dockerfile() \%>\%
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{copy}}, \code{\link{expose}},
   \code{\link{from}}, \code{\link{install_r_lib}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}

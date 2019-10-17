@@ -12,11 +12,11 @@ test_that("build_from_dockerfile throws errors if the file does not exist or
 
 
 
-test_that("build_from_dockerfile when dockerfile and image format are correct builds image",{
-  if(check_docker()){
-    images<-list_images()
-    if("dockyard_test"%in%images$REPOSITORY){
-      removal_output<-capture.output(system('docker image rm dockyard_test'))
+test_with_docker("build_from_dockerfile when dockerfile and image format are correct builds image",{
+
+    if("dockyard_test"%in%list_images()$REPOSITORY){
+      system('docker image rm dockyard_test',
+             show.output.on.console = FALSE)
     }
 
     images<-list_images()
@@ -24,14 +24,117 @@ test_that("build_from_dockerfile when dockerfile and image format are correct bu
     build_from_dockerfile(
       path = "testfiles/basic_dockerfile",
       image = "dockyard_test",
-      builddir = "testfiles")
-    latest_images<-list_images()
-    expect_false("dockyard_test"%in%images$REPOSITORY)
-    expect_true("dockyard_test"%in%latest_images$REPOSITORY)
+      builddir = "testfiles",
+      verbose=FALSE)
 
-    results <- system("docker run --rm --name test dockyard_test",intern = TRUE)
+    latest_images <- list_images()
+    results <- system("docker run --rm --name test dockyard_test",
+                      intern = TRUE,
+                      show.output.on.console = FALSE)
+
+    expect_false( "dockyard_test"%in%images$REPOSITORY)
+    expect_true( "dockyard_test"%in%latest_images$REPOSITORY)
     expect_equal(results,
                  c("Hello from {dockyard}!",
-                   "This message shows that your installation of {dockyard} and Docker appears to be working correctly."))
+                   paste("This message shows that your installation of {dockyard}",
+                         "and Docker appears to be working correctly.")))
+    system('docker image rm dockyard_test',
+           ignore.stdout = TRUE,
+           show.output.on.console = FALSE)
+})
+
+
+test_with_docker("build.character can build an image from a path to a dockerfile",{
+
+  if("dockyard_test"%in%list_images()$REPOSITORY){
+    system('docker image rm dockyard_test',
+           show.output.on.console = FALSE)
   }
+
+  images<-list_images()
+
+  build.character(
+    "testfiles/basic_dockerfile",
+    image = "dockyard_test",
+    builddir = "testfiles",
+    verbose=FALSE)
+
+  latest_images <- list_images()
+  results <- system("docker run --rm --name test dockyard_test",
+                    intern = TRUE,
+                    show.output.on.console = FALSE)
+
+  expect_false( "dockyard_test"%in%images$REPOSITORY)
+  expect_true( "dockyard_test"%in%latest_images$REPOSITORY)
+  expect_equal(results,
+               c("Hello from {dockyard}!",
+                 paste("This message shows that your installation of {dockyard}",
+                       "and Docker appears to be working correctly.")))
+  system('docker image rm dockyard_test',
+         ignore.stdout = TRUE,
+         show.output.on.console = FALSE)
+})
+
+test_with_docker("build.dockerfile can build an image from a path to a dockerfile",{
+
+  if("dockyard_test"%in%list_images()$REPOSITORY){
+    system('docker image rm dockyard_test',
+           show.output.on.console = FALSE)
+  }
+
+  images<-list_images()
+
+  dockerfile("testfiles/basic_dockerfile") %>%
+  build(
+    image = "dockyard_test",
+    builddir = "testfiles",
+    verbose=FALSE)
+
+  latest_images <- list_images()
+  results <- system("docker run --rm --name test dockyard_test",
+                    intern = TRUE,
+                    show.output.on.console = FALSE)
+
+  expect_false( "dockyard_test"%in%images$REPOSITORY)
+  expect_true( "dockyard_test"%in%latest_images$REPOSITORY)
+  expect_equal(results,
+               c("Hello from {dockyard}!",
+                 paste("This message shows that your installation of {dockyard}",
+                       "and Docker appears to be working correctly.")))
+  system('docker image rm dockyard_test',
+         ignore.stdout = TRUE,
+         show.output.on.console = FALSE)
+})
+
+
+test_with_docker("build.dockerfile can build an image from a path to a dockerfile",{
+
+  if("dockyard_test"%in%list_images()$REPOSITORY){
+    system('docker image rm dockyard_test',
+           show.output.on.console = FALSE)
+  }
+
+  images<-list_images()
+
+  dockerfile() %>%
+    from("debian:buster") %>%
+    add("hello_world.txt", "/") %>%
+    cmd("echo","This message shows if your installation worked!") %>%
+    build(
+      image = "dockyard_test",
+      builddir = "testfiles",
+      verbose=FALSE)
+
+  latest_images <- list_images()
+  results <- system("docker run --rm --name test dockyard_test",
+                    intern = TRUE,
+                    show.output.on.console = FALSE)
+
+  expect_false( "dockyard_test"%in%images$REPOSITORY)
+  expect_true( "dockyard_test"%in%latest_images$REPOSITORY)
+  expect_equal(results,
+               "This message shows if your installation worked!")
+  system('docker image rm dockyard_test',
+         ignore.stdout = TRUE,
+         show.output.on.console = FALSE)
 })

@@ -80,24 +80,51 @@ dockerfile() \%>\%
   copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh",
                 "/usr/bin/shiny-server.sh")
 
+# Start a dockerfile based off of the rocker/shiny image to generate a
+# shiny server using R version 3.6.1, update all existing software
+# and install git and curl. Then initialize Rstudio server, and copy in a config file
+
+dockerfile() \%>\%
+ from("rocker/r-ver:devel") \%>\%
+ update() \%>\%
+ install("sudo","gdebi","pandoc","pandoc-citeproc",
+         "libcurl4-gnutls-dev","libcairo2-dev",
+         "libxtdev","wget","curl") \%>\%
+  run("wget --no-verbose
+       https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION
+       -O version.txt") \%>\%
+  run("VERSION=$(cat version.txt)") \%>\%
+  run("wget --no-verbose
+       https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-$VERSION-amd64.deb
+       -O ss-latest.deb") \%>\%
+  run("gdebi -n ss-latest.deb") \%>\%
+  run("rm -f version.txt ss-latest.deb") \%>\%
+  run(". /etc/environment") \%>\%
+  install_r_lib("shiny","rmarkdown") \%>\%
+  run("cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/") \%>\%
+  expose(3838) \%>\%
+  copy_from_url("https://raw.githubusercontent.com/rocker-org/shiny/master/shiny-server.sh",
+                "/usr/bin/shiny-server.sh") \%>\%
+  add("/my/local/shiny/folder/","/srv/shiny-server/")
+
 }
 \seealso{
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{expose}}, \code{\link{from}},
   \code{\link{install_r_lib}}, \code{\link{install}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{expose}}, \code{\link{from}},
   \code{\link{install_r_lib}}, \code{\link{install}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{expose}}, \code{\link{from}},
   \code{\link{install_r_lib}}, \code{\link{install}},
-  \code{\link{run}}, \code{\link{save}},
-  \code{\link{update}}
+  \code{\link{run}}, \code{\link{update}},
+  \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}
