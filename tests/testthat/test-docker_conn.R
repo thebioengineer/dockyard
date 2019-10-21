@@ -8,7 +8,7 @@ if(check_docker()){
       build("connection_test_image")
   }
 
-  if(any(c("connection_test","connection_test_2")%in%list_containers()$NAMES)){
+  if(any(c("connection_test","connection_test2")%in%list_containers()$NAMES)){
     #kill existing test containers
     containers<- c("connection_test","connection_test2")[
       c("connection_test","connection_test2")%in%list_containers()$NAMES]
