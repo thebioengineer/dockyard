@@ -16,13 +16,14 @@
 #' d_conn<-docker_run(image = "rocker/r-ver:devel", name = "testimage")
 #' }
 docker_run <- function(image,name,ports,mountpoints,docker_run_args){
-  if(!is_local_image(image) & !check_docker_imagename(image)){
-    stop("Enter a valid docker image name in the format: user/image[:tag]")
+  if(!check_docker_imagename(image)){
+    stop("Enter a valid docker image name in the format: [user/]image[:tag]")
   }
 
-  if(!missing(name) & grepl("\\s", name, perl=TRUE)){
+  if(!missing(name)){
+    if(grepl("\\s", name, perl=TRUE)){
     stop("Must use a valid name without spaces")
-  }
+  }}
 
   run_cmd<-"docker run --rm -d"
 
@@ -62,19 +63,10 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
     which_image<-do.call('c',lapply(running_containers$CONTAINER.ID,function(id,newcontainerid){
       grepl(paste0("^",id),newcontainerid)},
       start_results))
-    name <- running_containers$NAMES[[which_image]]
+    name <- running_containers$NAMES[which_image]
   }
   docker_connection(name)
 }
-
-
-
-is_local_image <- function(name){
-  images <- list_images()
-  image <- strsplit(name,":")[[1]][1]
-  image %in% images$REPOSITORY
-}
-
 
 #' @export
 #' @title kill a docker container
@@ -147,31 +139,6 @@ docker_pause.docker_connection<-function(x){
   result<-system(rm_cmd,intern = TRUE)
   if(is.null(attr(result,"status"))){
     message("Paused Docker Container: ",attr(x,".name"))
-  }
-}
-
-#' @export
-#' @title Start a docker container to maintain its state
-#' @description Start a stopped docker container
-#' @param x either the name of the docker container or a docker_connection
-#' @return NULL
-#' @exportMethod docker_start
-
-docker_start<-function(x){
-  UseMethod("docker_start")
-}
-#' @export
-docker_start.character<-function(x){
-  conn<-docker_connection(x)
-  docker_start.docker_connection(conn)
-}
-#' @export
-docker_start.docker_connection<-function(x){
-  id <- attr(x,".docker_id")
-  rm_cmd <- paste("docker start",id)
-  result<-system(rm_cmd,intern = TRUE)
-  if(is.null(attr(result,"status"))){
-    message("Started Docker Container: ",attr(x,".name"))
   }
 }
 

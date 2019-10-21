@@ -4,12 +4,14 @@
 \alias{expose}
 \title{EXPOSE a port from the docker image}
 \usage{
-expose(df, port)
+expose(df, port, type = NULL)
 }
 \arguments{
 \item{df}{a dockerfile object from `dockerfile()`}
 
 \item{port}{the port to be exposing from the docker container}
+
+\item{type}{port open type (defaults to null)}
 }
 \description{
 Command to expose a port from inside the docker container through
