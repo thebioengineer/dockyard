@@ -145,6 +145,7 @@ run <- function(df, cmd) {
 #' @description Command to expose a port from inside the docker container through
 #' @param df a dockerfile object from `dockerfile()`
 #' @param port the port to be exposing from the docker container
+#' @param type port open type (defaults to null)
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1, update all existing software
@@ -172,10 +173,13 @@ run <- function(df, cmd) {
 #'
 #' @family dockerfile
 #'
-expose <- function(df,port){
+expose <- function(df,port,type=NULL){
   valid_ports<-c(1023,65535)
   if(port<valid_ports[1] | port>valid_ports[2]){
     stop("Enter a valid port number between ",valid_ports[1]," and ",valid_ports[2],".")
+  }
+  if(!is.null(type)){
+    port <- paste0(port,"/",type)
   }
   cmd <- paste("EXPOSE",port)
   add_command(df, cmd)

@@ -16,8 +16,8 @@
 #' d_conn<-docker_run(image = "rocker/r-ver:devel", name = "testimage")
 #' }
 docker_run <- function(image,name,ports,mountpoints,docker_run_args){
-  if(!is_local_image(image) & !check_docker_imagename(image)){
-    stop("Enter a valid docker image name in the format: user/image[:tag]")
+  if(!check_docker_imagename(image)){
+    stop("Enter a valid docker image name in the format: [user/]image[:tag]")
   }
 
   if(!missing(name) & grepl("\\s", name, perl=TRUE)){
