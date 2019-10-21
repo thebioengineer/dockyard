@@ -57,10 +57,10 @@ test_that("`run` adds commands to evaluate as though in the linux command line",
 
 test_that("`expose` adds commands to expose a port between 1023 and 65535", {
   df_expose <- dockerfile() %>%
-    expose(1234)
+    expose(1234,"tcp")
 
   expect_equal(as.character(df_expose),
-               "EXPOSE 1234")
+               "EXPOSE 1234/tcp")
   expect_error(expose(dockerfile(),100),
                "Enter a valid port number")
 })
