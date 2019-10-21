@@ -143,31 +143,6 @@ docker_pause.docker_connection<-function(x){
 }
 
 #' @export
-#' @title Start a docker container to maintain its state
-#' @description Start a stopped docker container
-#' @param x either the name of the docker container or a docker_connection
-#' @return NULL
-#' @exportMethod docker_start
-
-docker_start<-function(x){
-  UseMethod("docker_start")
-}
-#' @export
-docker_start.character<-function(x){
-  conn<-docker_connection(x)
-  docker_start.docker_connection(conn)
-}
-#' @export
-docker_start.docker_connection<-function(x){
-  id <- attr(x,".docker_id")
-  rm_cmd <- paste("docker start",id)
-  result<-system(rm_cmd,intern = TRUE)
-  if(is.null(attr(result,"status"))){
-    message("Started Docker Container: ",attr(x,".name"))
-  }
-}
-
-#' @export
 #' @title unpause a docker container
 #' @description unpause a paused docker container
 #' @param x either the name of the docker container or a docker_connection
