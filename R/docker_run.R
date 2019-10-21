@@ -20,9 +20,10 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
     stop("Enter a valid docker image name in the format: [user/]image[:tag]")
   }
 
-  if(!missing(name) & grepl("\\s", name, perl=TRUE)){
+  if(!missing(name)){
+    if(grepl("\\s", name, perl=TRUE)){
     stop("Must use a valid name without spaces")
-  }
+  }}
 
   run_cmd<-"docker run --rm -d"
 
@@ -62,19 +63,10 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
     which_image<-do.call('c',lapply(running_containers$CONTAINER.ID,function(id,newcontainerid){
       grepl(paste0("^",id),newcontainerid)},
       start_results))
-    name <- running_containers$NAMES[[which_image]]
+    name <- running_containers$NAMES[which_image]
   }
   docker_connection(name)
 }
-
-
-
-is_local_image <- function(name){
-  images <- list_images()
-  image <- strsplit(name,":")[[1]][1]
-  image %in% images$REPOSITORY
-}
-
 
 #' @export
 #' @title kill a docker container
