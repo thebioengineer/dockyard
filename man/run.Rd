@@ -4,12 +4,16 @@
 \alias{run}
 \title{RUN command in docker image}
 \usage{
-run(df, cmd)
+run(df, cmd, new = FALSE)
 }
 \arguments{
 \item{df}{a dockerfile object from `dockerfile()`}
 
 \item{cmd}{command to be run in the docker image during build}
+
+\item{new}{boolean indicating if the command should be added to the prior line.
+Useful for when breaking out lines in the docker image to skip time consuming build steps.
+ defaults to FALSE.}
 }
 \description{
 Command to be run in the docker image during building the image.
@@ -42,8 +46,8 @@ dockerfile() \%>\%
 \seealso{
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{copy}}, \code{\link{expose}},
-  \code{\link{from}}, \code{\link{install_r_lib}},
-  \code{\link{install}}, \code{\link{update}},
-  \code{\link{write_dockerfile}}
+  \code{\link{from}}, \code{\link{install_r_lib_version}},
+  \code{\link{install_r_lib}}, \code{\link{install}},
+  \code{\link{update}}, \code{\link{write_dockerfile}}
 }
 \concept{dockerfile}

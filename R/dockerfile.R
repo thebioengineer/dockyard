@@ -72,6 +72,9 @@ install <- function(df, ...) {
 #' @description install packages from the default CRAN location for R
 #' @param df a dockerfile object from `dockerfile()`
 #' @param ... The R packages to install to the docker image
+#' @param new boolean indicating if the command should be added to the prior `Run`` line.
+#'  Useful for when breaking out lines in the docker image to skip time consuming library build steps.
+#'  defaults to FALSE.
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1, update all existing software
@@ -86,7 +89,7 @@ install <- function(df, ...) {
 #'   install_r_lib("tidyverse")
 #' @family dockerfile
 #'
-install_r_lib <- function(df, ...) {
+install_r_lib <- function(df, ..., new = FALSE) {
   to_install <- match.call(expand.dots = FALSE)$`...`
 
   install_command <- paste(
@@ -94,6 +97,43 @@ install_r_lib <- function(df, ...) {
     paste0("'", to_install, "'", collapse = ", "),
     "))\""
   )
+
+  run(df, install_command, new = new)
+}
+
+#' @export
+#' @title Install specific package version for R
+#' @description install packages from the default CRAN location for R
+#' @param df a dockerfile object from `dockerfile()`
+#' @param package The R package to install to the docker image as a character.
+#' @param version The version R package to install to the docker image as a character.
+#' @param new boolean indicating if the command should be added to the prior `Run`` line.
+#'  Useful for when breaking out lines in the docker image to skip time consuming library build steps.
+#'  defaults to FALSE.
+#' @examples
+#' # Start a dockerfile based off of the rocker/shiny image to generate a
+#' # shiny server using R version 3.6.1, update all existing software
+#' # and install git and curl.
+#'
+#' dockerfile() %>%
+#'  from("rocker/r-ver:devel") %>%
+#'  update() %>%
+#'  install("sudo","gdebi","pandoc","pandoc-citeproc",
+#'          "libcurl4-gnutls-dev","libcairo2-dev",
+#'          "libxtdev","wget") %>%
+#'   install_r_lib("tidyverse") %>%
+#'   install_r_lib_version("ggplot2", version = "0.9.1")
+#' @family dockerfile
+#'
+install_r_lib_version <- function(df, package, version, new = FALSE) {
+
+  stopifnot(length(package)==length(version))
+
+  install_command <- paste(
+    "R -e \"if(!require(remotes)){install.packages('remotes');library(remotes)};",
+     paste0("remotes::install_version(package = '",
+            package, "', version = '",version,"')", collapse = ";"),
+     "))\"")
 
   run(df, install_command)
 }
@@ -104,6 +144,9 @@ install_r_lib <- function(df, ...) {
 #' @description Command to be run in the docker image during building the image.
 #' @param df a dockerfile object from `dockerfile()`
 #' @param cmd command to be run in the docker image during build
+#' @param new boolean indicating if the command should be added to the prior line.
+#'  Useful for when breaking out lines in the docker image to skip time consuming build steps.
+#'   defaults to FALSE.
 #' @examples
 #' # Start a dockerfile based off of the rocker/shiny image to generate a
 #' # shiny server using R version 3.6.1, update all existing software
@@ -130,8 +173,8 @@ install_r_lib <- function(df, ...) {
 #'
 #' @family dockerfile
 #'
-run <- function(df, cmd) {
-  if(grepl("^RUN",df[length(df)])){
+run <- function(df, cmd, new = FALSE) {
+  if(grepl("^RUN",df[length(df)]) & !new){
     command<-paste(df[[length(df)]], "&&", cmd )
     update_command(df,length(df),command)
   }else{

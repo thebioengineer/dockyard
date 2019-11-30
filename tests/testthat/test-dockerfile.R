@@ -41,6 +41,14 @@ test_that("`install_r_lib` adds a command to install R packages to image ", {
                "RUN R -e \"install.packages(c( 'ggplot2', 'car', 'dplyr' ))\"")
 })
 
+test_that("`install_r_lib_version` adds a command to install a specific version of an R package to image ", {
+  df_install_r_lib <- dockerfile() %>%
+    install_r_lib_version("ggplot2","0.9.1")
+
+  expect_equal(as.character(df_install_r_lib),
+               "RUN R -e \"if(!require(remotes)){install.packages('remotes');library(remotes)}; remotes::install_version(package = 'ggplot2', version = '0.9.1') ))\"")
+})
+
 test_that("`run` adds commands to evaluate as though in the linux command line", {
   df_run <- dockerfile() %>%
     run("this command")

@@ -111,18 +111,21 @@ dockerfile() \%>\%
 \seealso{
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{expose}}, \code{\link{from}},
+  \code{\link{install_r_lib_version}},
   \code{\link{install_r_lib}}, \code{\link{install}},
   \code{\link{run}}, \code{\link{update}},
   \code{\link{write_dockerfile}}
 
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{expose}}, \code{\link{from}},
+  \code{\link{install_r_lib_version}},
   \code{\link{install_r_lib}}, \code{\link{install}},
   \code{\link{run}}, \code{\link{update}},
   \code{\link{write_dockerfile}}
 
 Other dockerfile: \code{\link{build}}, \code{\link{cmd}},
   \code{\link{expose}}, \code{\link{from}},
+  \code{\link{install_r_lib_version}},
   \code{\link{install_r_lib}}, \code{\link{install}},
   \code{\link{run}}, \code{\link{update}},
   \code{\link{write_dockerfile}}

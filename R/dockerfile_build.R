@@ -13,14 +13,19 @@
 #' dockerfile() %>%
 #'   from("rocker/shiny:3.6.1")
 #' @family dockerfile
+#' @export
 build <- function(x, image, builddir = ".", verbose = TRUE) {
   UseMethod("build")
 }
 
+#' @family dockerfile
+#' @export
 build.character <- function(x, image, builddir = ".", verbose = TRUE){
   build_from_dockerfile(x, image, builddir, verbose)
 }
 
+#' @family dockerfile
+#' @export
 build.dockerfile <- function(x, image, builddir = ".", verbose = TRUE) {
   dockerfile_path<-attr(x, ".dockerfile")
   if(!file.exists(dockerfile_path)){
@@ -32,6 +37,8 @@ build.dockerfile <- function(x, image, builddir = ".", verbose = TRUE) {
   build_from_dockerfile(dockerfile_path, image, builddir, verbose)
 }
 
+#' @family dockerfile
+#' @export
 build.edited_dockerfile <- function(x, image, builddir = ".", verbose = TRUE) {
   commands <- commands(x)
   tempDF <- normalizePath(tempfile(tmpdir = builddir), winslash = "/", mustWork = FALSE)
@@ -39,8 +46,6 @@ build.edited_dockerfile <- function(x, image, builddir = ".", verbose = TRUE) {
   build_from_dockerfile(tempDF, image, builddir, verbose)
   unlink(tempDF)
 }
-
-
 
 build_from_dockerfile <- function(path, image, builddir = ".", verbose = TRUE) {
   if(!file.exists(path)){
