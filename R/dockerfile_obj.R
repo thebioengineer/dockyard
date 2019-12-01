@@ -17,9 +17,9 @@
 #'
 dockerfile <- function(path="") {
   if (file.exists(path)) {
-    commands <- readLines(path)
-    base_image <- gsub("^FROM\\s+", "", commands[1], perl = TRUE)
-    commands <- commands[-1]
+    df <- read_dockerfile(path)
+    commands <- df$commands
+    base_image <- df$base_image
   } else {
     commands <- ""
     base_image <- ""
@@ -108,4 +108,39 @@ commands <- function(df) {
     stop("No base image defined. Use 'from' to define base image.")
   }
   return(commands)
+}
+
+
+read_dockerfile <- function(path){
+  commands <- readLines(path)
+  base_image <- gsub("^FROM\\s+", "", commands[1], perl = TRUE)
+  commands <- commands[-1]
+  #combine_commands
+  commands <- commands[commands != ""]
+  if(any(grepl("\\\\$",commands))){
+    grouped_commands <- which(grepl("\\\\$",commands))
+    grouped_commands <- by(grouped_commands,cumsum(c(0,diff(grouped_commands)!=1)),function(g){
+      g <- c(g,g[length(g)]+1)
+      list(idx = g[1],rows = g,command = paste(gsub("\\\\$","",commands[g]),collapse = " "))
+    })
+    names(grouped_commands)<- seq_along(grouped_commands)
+    grouped_commands_idx <- sapply(grouped_commands,`[[`,1)
+    new_commands <- c()
+    idx <- 1
+    while(idx < length(commands)){
+      if(idx %in% grouped_commands_idx){
+        new_commands <- c(new_commands, grouped_commands[[which(grouped_commands_idx==idx)]][["command"]])
+        idx <- idx + length(grouped_commands[[which(grouped_commands_idx==idx)]][["rows"]])
+      }else{
+        new_commands <- c(new_commands,commands[idx])
+        idx <- idx + 1
+      }
+    }
+    commands <- new_commands
+  }
+
+  return(list(
+    base_image = base_image,
+    commands = commands
+  ))
 }

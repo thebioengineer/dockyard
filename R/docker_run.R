@@ -73,7 +73,7 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
 #' @description kill a currently running docker container
 #' @param x either the name of the docker container or a docker_connection
 #' @return NULL
-#' @exportMethod docker_kill
+#' @export
 docker_kill <- function(x){
   UseMethod("docker_kill")
 }
@@ -98,7 +98,7 @@ docker_kill.docker_connection<-function(x){
 #' @description Stop a currently running docker container
 #' @param x either the name of the docker container or a docker_connection
 #' @return NULL
-#' @exportMethod docker_stop
+#' @export
 docker_stop<-function(x){
   UseMethod("docker_stop",x)
 }
@@ -122,8 +122,7 @@ docker_stop.docker_connection<-function(x){
 #' @description Pause a docker container from the list of docker containers
 #' @param x either the name of the docker container or a docker_connection
 #' @return NULL
-#' @exportMethod docker_pause
-
+#' @export
 docker_pause<-function(x){
   UseMethod("docker_pause")
 }
@@ -147,8 +146,7 @@ docker_pause.docker_connection<-function(x){
 #' @description unpause a paused docker container
 #' @param x either the name of the docker container or a docker_connection
 #' @return NULL
-#' @exportMethod docker_unpause
-
+#' @export
 docker_unpause<-function(x){
   UseMethod("docker_unpause")
 }

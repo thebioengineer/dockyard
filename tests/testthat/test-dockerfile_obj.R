@@ -17,6 +17,15 @@ test_that("dockerfile objects initialized with a start file import all the infor
   expect_s3_class(df,c("dockerfile"))
 })
 
+test_that("dockerfile objects initialized with a start file import all the information, even with multiple lines", {
+  dockerfile_path <- "testfiles/multiline_dockerfile"
+  df<-dockerfile(dockerfile_path)
+  expect_equal(length(as.character(df)),4)
+  expect_equal(attr(df,".dockerfile"),dockerfile_path)
+  expect_equal(attr(df,".base_image"),"rocker/verse:latest")
+  expect_s3_class(df,c("dockerfile"))
+})
+
 
 test_that("dockerfile objects become `edited_dockerfile` when commands are added", {
   df<-dockerfile()

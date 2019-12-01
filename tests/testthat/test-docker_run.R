@@ -52,6 +52,7 @@ test_with_docker("`docker_run` can assign a port to a docker container", {
 
 test_with_docker("`docker_run` will provide a docker_connection and name,
                  even without a name passed", {
+
   d_conn <- docker_run(image = "rocker/shiny",
                        ports = "9875:3838")
   on.exit({
