@@ -59,7 +59,7 @@ build_from_dockerfile <- function(path, image, builddir = ".", verbose = TRUE) {
     stop("`docker` needs to be added to your execution path.")
   }
 
-  cmd <- paste("docker build -f",path, "-t", image, builddir)
+  cmd <- paste("build -f",path, "-t", image, builddir)
   # print(cmd)
-  system(cmd,intern = TRUE,show.output.on.console = verbose)
+  docker(cmd,stdout = TRUE)
 }
