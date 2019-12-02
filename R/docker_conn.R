@@ -49,7 +49,7 @@ docker_connection <- function(name){
 #' @export
 list_containers<-function(){
   dockercontainers<-tempfile()
-  writeLines(system("docker ps -a",intern = TRUE),dockercontainers)
+  writeLines(docker("ps -a",stdout = TRUE),dockercontainers)
   header<-readLines(dockercontainers,n = 1)
 
   locs<-as.numeric(gregexpr(pattern = "\\s\\s\\w",header)[[1]])
@@ -121,7 +121,7 @@ print.docker_connection<-function(x,...){
 #' @export
 list_images<-function(){
   dockerimages<-tempfile()
-  writeLines(system("docker image ls ",intern = TRUE),dockerimages)
+  writeLines(docker("image ls ",stdout = TRUE),dockerimages)
   header<-readLines(dockerimages,n = 1)
 
   locs<-as.numeric(gregexpr(pattern = "\\s\\s\\w",header)[[1]])

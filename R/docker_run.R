@@ -25,7 +25,7 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
     stop("Must use a valid name without spaces")
   }}
 
-  run_cmd<-"docker run --rm -d"
+  run_cmd<-"run --rm -d"
 
   if(!missing(ports)){
     if(!grepl("\\d+[:]\\d+",ports)){
@@ -51,7 +51,7 @@ docker_run <- function(image,name,ports,mountpoints,docker_run_args){
 
   run_cmd <- paste(run_cmd,image)
 
-  start_results<-system(run_cmd,intern = TRUE)
+  start_results<-docker(run_cmd,stdout = TRUE)
 
   if(!is.null(attr(start_results,"status"))){
   if(attr(start_results,"status")!=0){
@@ -85,8 +85,8 @@ docker_kill.character<-function(x){
 #' @export
 docker_kill.docker_connection<-function(x){
   id <- attr(x,".docker_id")
-  kill_cmd <- paste("docker kill",id)
-  result<-system(kill_cmd,intern = TRUE)
+  kill_cmd <- paste("kill",id)
+  result<-docker(kill_cmd,stdout = TRUE)
   if(is.null(attr(result,"status"))){
     message("Killed Docker Container: ",attr(x,".name"))
   }
@@ -110,8 +110,8 @@ docker_stop.character<-function(x){
 #' @export
 docker_stop.docker_connection<-function(x){
   id <- attr(x,".docker_id")
-  stop_cmd <- paste("docker stop",id)
-  result<-system(stop_cmd,intern = TRUE)
+  stop_cmd <- paste("stop",id)
+  result<-docker(stop_cmd,stdout = TRUE)
   if(is.null(attr(result,"status"))){
     message("Stopped Docker Container: ",attr(x,".name"))
   }
@@ -134,8 +134,8 @@ docker_pause.character<-function(x){
 #' @export
 docker_pause.docker_connection<-function(x){
   id <- attr(x,".docker_id")
-  rm_cmd <- paste("docker pause",id)
-  result<-system(rm_cmd,intern = TRUE)
+  rm_cmd <- paste("pause",id)
+  result<-docker(rm_cmd,stdout = TRUE)
   if(is.null(attr(result,"status"))){
     message("Paused Docker Container: ",attr(x,".name"))
   }
@@ -152,15 +152,15 @@ docker_unpause<-function(x){
 }
 #' @export
 docker_unpause.character<-function(x){
-  conn<-docker_connection(x)
+  conn <- docker_connection(x)
   docker_unpause.docker_connection(conn)
 }
 #' @export
 docker_unpause.docker_connection<-function(x){
-  id <- attr(x,".docker_id")
-  rm_cmd <- paste("docker unpause",id)
-  result<-system(rm_cmd,intern = TRUE)
-  if(is.null(attr(result,"status"))){
-    message("Unpaused Docker Container: ",attr(x,".name"))
+  id <- attr(x, ".docker_id")
+  rm_cmd <- paste("unpause", id)
+  result <- docker(rm_cmd, stdout = TRUE)
+  if(is.null(attr(result, "status"))){
+    message("Unpaused Docker Container: ", attr(x, ".name"))
   }
 }

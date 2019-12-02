@@ -9,8 +9,8 @@
 check_docker <- function() {
 
   cmd <- suppressWarnings({
-      system2(
-      "docker",
+      docker(
+      "",
       stdout = FALSE,
       stderr = FALSE
       )
